@@ -4,7 +4,14 @@ import { Route, Routes } from 'react-router-dom';
 
 import './style.scss';
 
-import Header from 'src/components/Header';
+import Header from '../Header';
+import NotFound from '../NotFound';
+import FAQ from '../FAQ';
+import SearchBar from '../SearchBar';
+import Message from '../Message';
+import ReposResults from '../ReposResults';
+import Loader from '../Loader';
+import LoadMore from '../LoadMore';
 // ici on vient trier les données retournées par l'API de Github
 // on vient mapper/faire correspondre ces données avec ce qu'on a besoin
 // dans nos composants
@@ -84,6 +91,37 @@ const getMappedData = (items) => (items.map((item) => ({
     return (
       <div className="app">
             <Header />
+            <Routes>
+              <Route 
+                path="/"
+                element={ 
+                          <>
+                            <SearchBar
+                              onFormSubmit={setSearchQuery}
+                              inputValue={search}
+                              onChangeInputValue={setSearch}
+                             /> 
+                             {!loading && query && <Message message={`la recherche a donnée ${totalCount} résultats`} />}
+                             <ReposResults results={getMappedData(results)} />
+                             {loading && <Loader />}
+                             <LoadMore
+                                visible={showLoadMore}
+                                // le click sur le bouton permet d'incrémenter
+                                // le numéro de page qu'on souhaite
+                                onClickButton={() => setPage(page + 1)}
+                              />
+                          </>
+                        }
+              />
+              <Route 
+                path="/faq"
+                element={ <FAQ /> }
+              />
+              <Route 
+                path="*"
+                element={ <NotFound /> }
+              />
+            </Routes>
         </div>
     )
 }
